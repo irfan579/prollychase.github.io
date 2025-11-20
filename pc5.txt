@@ -1,0 +1,19 @@
+#include <mpi.h>
+#include <stdio.h>
+
+int main(int argc,char**argv){
+  MPI_Init(&argc,&argv);
+  int r,s; MPI_Comm_rank(MPI_COMM_WORLD,&r); MPI_Comm_size(MPI_COMM_WORLD,&s);
+  if(s<2){ if(r==0) printf("Need 2 procs\n"); MPI_Finalize(); return 0; }
+  if(r==0){
+    int x=123;
+    MPI_Send(&x,1,MPI_INT,1,0,MPI_COMM_WORLD);
+    printf("P0 sent %d\n",x);
+  } else if(r==1){
+    int y;
+    MPI_Recv(&y,1,MPI_INT,0,0,MPI_COMM_WORLD,MPI_STATUS_IGNORE);
+    printf("P1 recv %d\n",y);
+  }
+  MPI_Finalize();
+  return 0;
+}
