@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <omp.h>
+#include <math.h>
+
+int prime(int n){
+  if(n<2) return 0;
+  for(int i=2;i*i<=n;i++)
+    if(n%i==0) return 0;
+  return 1;
+}
+
+int main(int c,char **v){
+  int n=c>1?atoi(v[1]):100000;
+  double t1,t2;
+
+  t1=omp_get_wtime();
+  for(int i=1;i<=n;i++) prime(i);
+  t1=omp_get_wtime()-t1;
+
+  t2=omp_get_wtime();
+  #pragma omp parallel for
+  for(int i=1;i<=n;i++) prime(i);
+  t2=omp_get_wtime()-t2;
+
+  printf("Serial: %f\nParallel: %f\n", t1, t2);
+}
